@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Updates — ReChord</title>
+<meta name="description" content="What's new in ReChord, told as a route: every release is a stop on the way.">
+<meta name="theme-color" content="#050a14">
+<link rel="icon" href="assets/ui/rechord-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@1&display=swap">
+<link rel="stylesheet" href="css/site.css">
+<link rel="stylesheet" href="css/pages.css">
+</head>
+<body data-page="updates">
+<main>
+  <section class="page-hero">
+    <div class="grid-bg" aria-hidden="true"></div><div class="glow" aria-hidden="true"></div>
+    <div class="wrap">
+      <span class="eyebrow" data-reveal>Updates</span>
+      <h1 class="display split">Every release is <span class="serif">a stop on the way.</span></h1>
+      <p class="lead" data-reveal style="--d:.3s">We only announce what you can already use. Scroll the route, newest stop first.</p>
+      <span class="chip draft-chip" data-reveal style="--d:.4s"><span class="dot"></span>Draft: sample entries and dates</span>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="route" id="route">
+      <svg aria-hidden="true"><path class="r-bg" id="r-bg"/><path class="r-fg" id="r-fg"/></svg>
+      <div class="traveller" id="traveller" aria-hidden="true"></div>
+      <div id="stops"></div>
+      <div class="route-end">
+        <span class="eyebrow">Where it began</span>
+        <h2 class="h2">One voice, <span class="serif">one pin.</span></h2>
+        <a class="btn" data-store target="_blank" rel="noopener" data-magnetic>Get the latest version</a>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="footer" id="footer"></footer>
+<script src="js/core.js"></script>
+<script src="js/pages.js"></script>
+</body>
+</html>

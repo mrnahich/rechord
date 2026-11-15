@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ReChord — Say it. Pin it. It stays.</title>
+<meta name="description" content="ReChord pins voice notes to real places. Record a moment where it happened, and let whoever walks by next hear it.">
+<meta name="theme-color" content="#050a14">
+<link rel="icon" href="assets/ui/rechord-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@1&display=swap">
+<link rel="stylesheet" href="vendor/maplibre-gl.css">
+<link rel="stylesheet" href="css/site.css">
+<link rel="stylesheet" href="css/home.css">
+</head>
+<body data-page="home">
+
+<main>
+<!-- ============================ HOOK ============================ -->
+<section class="hero" id="hero" data-state="locating" data-rec="idle">
+  <div id="map" aria-label="A sketch map of your area with demo voices pinned on it"></div>
+  <div class="hero-scrim" aria-hidden="true"></div>
+
+  <div class="intro" id="intro" aria-hidden="true">
+    <div class="intro-logo"></div>
+    <div class="intro-rings"><i></i><i></i><i></i></div>
+    <p class="mono">Finding where you are…</p>
+  </div>
+
+  <div class="hero-copy">
+    <div class="hero-chips">
+      <span class="chip" id="loc-chip"><span class="dot"></span><span id="loc-text">Locating…</span></span>
+      <button class="chip chip-btn" id="city-btn" type="button">Wrong city?</button>
+      <form class="city-form" id="city-form" hidden>
+        <input id="city-input" type="text" placeholder="Type a city…" autocomplete="off" aria-label="City">
+        <button type="submit" aria-label="Go">→</button>
+      </form>
+    </div>
+    <h1 class="display">Leave your voice <span class="serif">where you are.</span></h1>
+    <p class="lead" id="hero-sub">ReChord pins voice notes to real places. Give us a second, we're drawing your corner of the world.</p>
+    <div class="hero-cta" id="hero-cta" hidden>
+      <a class="btn" data-store target="_blank" rel="noopener" data-magnetic>Keep it for real <svg class="arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></a>
+      <button class="mini-link" id="remove-voice" type="button">Remove my voice</button>
+    </div>
+  </div>
+
+  <aside class="vcard" id="vcard" aria-live="polite" hidden>
+    <div class="vc-cover" id="vc-cover"></div>
+    <div class="vc-body">
+      <div class="vc-head">
+        <div class="vc-avatar" id="vc-avatar"></div>
+        <div class="vc-who"><b id="vc-name"></b><span id="vc-ago"></span></div>
+        <span class="vc-tag" id="vc-tag">Demo voice</span>
+        <button class="vc-x" id="vc-close" aria-label="Close">×</button>
+      </div>
+      <h3 class="vc-title" id="vc-title"></h3>
+      <p class="vc-place"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.2a5 5 0 0 0-5 5c0 3.6 4.3 8 4.5 8.200a.7.7 0 0 0 1 0C8.700 14.2 13 9.800 13 6.200a5 5 0 0 0-5-5Zm0 6.800a1.800 1.800 0 1 1 0-3.600 1.800 1.800 0 0 1 0 3.600Z"/></svg><span id="vc-place"></span></p>
+      <div class="vc-player">
+        <button class="vc-play" id="vc-play" aria-label="Play"><svg class="i-play" viewBox="0 0 16 16" fill="currentColor"><path d="M4.500 2.700v10.600a.6.6 0 0 0 .9.500l8.600-5.300a.6.6 0 0 0 0-1L5.400 2.200a.6.6 0 0 0-.9.500Z"/></svg><svg class="i-pause" viewBox="0 0 16 16" fill="currentColor"><rect x="3.500" y="2.500" width="3.200" height="11" rx="1"/><rect x="9.300" y="2.500" width="3.200" height="11" rx="1"/></svg></button>
+        <div class="wave" id="vc-wave"></div>
+        <span class="vc-time mono" id="vc-time">0:00</span>
+      </div>
+      <div class="vc-foot">
+        <button class="vc-like" id="vc-like" aria-pressed="false"><svg viewBox="0 0 16 16"><path d="M8 13.700S2 10.200 2 6.200A3.200 3.200 0 0 1 8 4.700a3.200 3.200 0 0 1 6 1.500c0 4-6 7.500-6 7.500Z"/></svg><span id="vc-likes"></span></button>
+        <span class="vc-plays"><span id="vc-plays"></span> plays</span>
+        <span class="vc-nav"><button id="vc-prev" aria-label="Previous voice">←</button><button id="vc-next" aria-label="Next voice">→</button></span>
+      </div>
+    </div>
+  </aside>
+
+  <div class="dock" id="dock">
+    <canvas id="live-wave" width="600" height="80" aria-hidden="true"></canvas>
+    <button class="rec" id="rec" type="button" aria-label="Record your voice" data-hot>
+      <svg class="rec-ring" viewBox="0 0 100 100" aria-hidden="true"><circle class="track" cx="50" cy="50" r="46"/><circle class="prog" id="rec-prog" cx="50" cy="50" r="46" pathLength="100"/></svg>
+      <span class="rec-core"></span>
+    </button>
+    <div class="dock-label"><b id="dock-title">Hold to record</b><span id="dock-sub">Up to 15 seconds · never leaves this device</span></div>
+  </div>
+
+  <p class="hero-note">Voices on this map are demos, not real users. <a href="#how">See how the app works ↓</a></p>
+</section>
+
+<!-- ============================ HOW ============================ -->
+<section class="how" id="how" data-step="0">
+  <div class="how-sticky">
+    <div class="wrap how-grid">
+      <div class="how-text">
+        <span class="eyebrow">How it works</span>
+        <div class="how-steps">
+          <article class="how-step" data-i="0">
+            <span class="num mono">01</span>
+            <h2 class="h2">Say <span class="serif">it.</span></h2>
+            <p class="lead">Open ReChord and record up to 60 seconds. No text, no filters, no editing your personality out. A thought, a memory, a little “I was here.”</p>
+          </article>
+          <article class="how-step" data-i="1">
+            <span class="num mono">02</span>
+            <h2 class="h2">Pin <span class="serif">it.</span></h2>
+            <p class="lead">Your voice lands on the exact spot you're standing. Add a title and a photo if you like. Keep it private, or leave it for the world.</p>
+          </article>
+          <article class="how-step" data-i="2">
+            <span class="num mono">03</span>
+            <h2 class="h2">It <span class="serif">stays.</span></h2>
+            <p class="lead">No timeline to sink in. Your voice waits at that place, and anyone exploring the map can find it, listen, and feel what you felt.</p>
+          </article>
+        </div>
+        <div class="how-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+      </div>
+
+      <div class="phone-stage">
+        <div class="phone-halo" aria-hidden="true"></div>
+        <div class="phone" id="app-phone" aria-hidden="true"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ MANIFESTO ============================ -->
+<section class="manifesto pad" id="manifesto">
+  <div class="wrap">
+    <span class="eyebrow" data-reveal>The idea</span>
+    <p class="manifesto-text" id="manifesto-text">No timelines. No filters. No expiration. Just a voice, left in the place where it happened, waiting for whoever walks by next.</p>
+    <div class="manifesto-tags" data-reveal>
+      <span>Voice-first</span><span>Location-anchored</span><span>Permanent &amp; personal</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ FEATURES ============================ -->
+<section class="features pad" id="features">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow" data-reveal>What's inside</span>
+      <h2 class="h2 split">Small app. <span class="serif">Big memory.</span></h2>
+    </div>
+    <div class="bento">
+      <article class="card b-map" data-tilt data-reveal>
+        <div class="b-art art-map" id="art-map"></div>
+        <div class="b-copy"><h3>The map is the feed</h3><p>Explore voices around you or anywhere on Earth. Zoom into a street and hear what happened there.</p></div>
+      </article>
+      <article class="card b-sixty" data-tilt data-reveal style="--d:.08s">
+        <div class="b-art art-sixty"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" class="t"/><circle cx="60" cy="60" r="52" class="p" pathLength="100"/></svg><b class="mono">60<small>s</small></b></div>
+        <div class="b-copy"><h3>One minute, max</h3><p>Enough for a moment. Not enough to perform.</p></div>
+      </article>
+      <article class="card b-private" data-tilt data-reveal style="--d:.16s">
+        <div class="b-art art-toggle"><div class="switch"><i></i></div><span class="lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round"><rect x="5" y="11" width="14" height="9" rx="2.500"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span></div>
+        <div class="b-copy"><h3>Private voices</h3><p>Some places are just for you. Keep a voice hidden from everyone else.</p></div>
+      </article>
+      <article class="card b-precise" data-tilt data-reveal>
+        <div class="b-art art-precise"><span class="blur-zone"></span><span class="exact"></span></div>
+        <div class="b-copy"><h3>Exact spot, or just nearby</h3><p>Pin the very bench, or only the neighbourhood. You choose how precise.</p></div>
+      </article>
+      <article class="card b-photo" data-tilt data-reveal style="--d:.08s">
+        <div class="b-art art-photo"><img src="assets/img/cover_rooftop.jpg" alt="" loading="lazy"><img src="assets/img/cover_beach.jpg" alt="" loading="lazy"><img src="assets/img/cover_concert.jpg" alt="" loading="lazy"></div>
+        <div class="b-copy"><h3>A photo, if you want</h3><p>Give a voice a cover, so the place has a face.</p></div>
+      </article>
+      <article class="card b-share" data-tilt data-reveal style="--d:.16s">
+        <div class="b-art art-share"><span class="share-link mono"><i></i>go.rechord.life/v/…</span><span class="heart"><svg viewBox="0 0 16 16"><path d="M8 13.700S2 10.200 2 6.200A3.200 3.200 0 0 1 8 4.700a3.200 3.200 0 0 1 6 1.500c0 4-6 7.500-6 7.500Z"/></svg></span></div>
+        <div class="b-copy"><h3>Share a place, not a post</h3><p>Send one link. It opens the voice right where it lives. Likes and listens come back to you.</p></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ STORIES ============================ -->
+<section class="stories pad" id="stories">
+  <div class="wrap sec-head">
+    <span class="eyebrow" data-reveal>Places remember</span>
+    <h2 class="h2 split">Every corner has <span class="serif">something to say.</span></h2>
+    <p class="stories-hint mono" data-reveal>Demo voices · tap a card to listen · drag →</p>
+  </div>
+  <div class="strip" id="strip"></div>
+</section>
+
+<!-- ============================ CTA ============================ -->
+<section class="cta" id="get">
+  <div class="cta-earth" id="cta-earth" aria-hidden="true"></div>
+  <div class="wrap cta-inner">
+    <span class="eyebrow" data-reveal>Free on the App Store</span>
+    <h2 class="display split">A world worth <span class="serif">listening to.</span></h2>
+    <p class="lead" data-reveal>You've felt it on our little map. Now put your voice on the real one.</p>
+    <div class="cta-actions" data-reveal>
+      <a class="store-badge" data-store target="_blank" rel="noopener" aria-label="Download on the App Store"><img src="assets/ui/app-store-badge.svg" alt="Download on the App Store" height="56"></a>
+      <div class="qr"><div id="qr"></div><span class="mono">Scan with<br>your iPhone</span></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="footer" id="footer"></footer>
+
+<script src="vendor/maplibre-gl.js"></script>
+<script src="vendor/qrcode.min.js"></script>
+<script src="js/core.js"></script>
+<script src="js/hook.js"></script>
+<script src="js/appui.js"></script>
+<script src="js/home.js"></script>
+</body>
+</html>

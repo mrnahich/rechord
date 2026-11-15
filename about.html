@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Team — ReChord</title>
+<meta name="description" content="The people behind ReChord, the app that pins voices to places.">
+<meta name="theme-color" content="#050a14">
+<link rel="icon" href="assets/ui/rechord-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@1&display=swap">
+<link rel="stylesheet" href="css/site.css">
+<link rel="stylesheet" href="css/pages.css">
+</head>
+<body data-page="about">
+<main>
+  <section class="page-hero">
+    <div class="grid-bg" aria-hidden="true"></div><div class="glow" aria-hidden="true"></div>
+    <div class="wrap">
+      <span class="eyebrow" data-reveal>The people</span>
+      <h1 class="display split">The minds behind <span class="serif">the voices.</span></h1>
+      <p class="lead" data-reveal style="--d:.3s">ReChord started unexpectedly, as many meaningful things do. Five people, one stubborn idea: a voice should be able to stay where it was spoken. So we pinned ourselves to a map. Tap a face and hear who we are.</p>
+    </div>
+  </section>
+
+  <section class="wrap" style="padding-bottom: clamp(80px, 11vw, 150px)">
+    <div class="tmap" id="tmap" data-reveal>
+      <svg class="tmap-art" viewBox="0 0 1000 620" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs><radialGradient id="tg" cx="50%" cy="45%" r="70%"><stop offset="0" stop-color="#12305f"/><stop offset="1" stop-color="#070d18"/></radialGradient></defs>
+        <rect width="1000" height="620" fill="url(#tg)"/>
+        <path d="M-20 470C120 430 210 520 360 480S560 380 700 430 900 520 1020 470V640H-20Z" fill="#040a16" stroke="#2f6fd0" stroke-opacity=".5"/>
+        <path d="M-20 520C140 480 230 560 380 530S600 440 720 480 900 560 1020 520" fill="none" stroke="#2f6fd0" stroke-opacity=".18"/>
+        <g fill="#0f3340" opacity=".8"><path d="M610 300c40-30 110-20 130 20s-10 90-60 96-90-20-96-56 6-44 26-60Z"/><path d="M120 120c30-20 80-10 90 24s-20 60-56 60-58-24-54-48 8-28 20-36Z"/><ellipse cx="880" cy="140" rx="60" ry="38"/></g>
+        <g fill="none" stroke="rgba(150,204,255,.6)" stroke-width="5" stroke-linecap="round"><path d="M-20 250C160 230 260 300 430 270S720 180 1020 230"/><path d="M300 -20C290 120 380 240 350 420S330 560 350 640"/><path d="M760 -20C740 100 800 220 770 330S820 520 800 640"/></g>
+        <g fill="none" stroke="rgba(113,180,255,.3)" stroke-width="2.5" stroke-linecap="round"><path d="M-20 90 300 70 560 110 1020 60M-20 370 350 350 620 400 1020 340M140 -20 160 460M540 -20 520 430M920 -20 900 480M30 180 300 160M430 270 540 190M540 190 760 150M560 110 600 300M160 300 350 330M800 420 1020 400"/></g>
+        <g fill="none" stroke="rgba(93,168,255,.14)" stroke-width="1.5"><path d="M60 -20 80 440M220 -20 240 470M400 -20 420 440M620 -20 640 430M680 -20 690 440M840 -20 850 500M980 -20 960 470M-20 20 1020 10M-20 150 1020 130M-20 200 1020 290M-20 310 1020 300M-20 420 300 410"/></g>
+        <g fill="rgba(47,111,208,.28)"><rect x="170" y="255" width="40" height="30" rx="4"/><rect x="225" y="262" width="52" height="24" rx="4"/><rect x="380" y="130" width="46" height="40" rx="4"/><rect x="440" y="120" width="60" height="30" rx="4"/><rect x="570" y="210" width="36" height="52" rx="4"/><rect x="810" y="250" width="56" height="40" rx="4"/><rect x="880" y="300" width="40" height="30" rx="4"/><rect x="60" y="320" width="56" height="28" rx="4"/><rect x="430" y="330" width="60" height="36" rx="4"/><rect x="660" y="80" width="50" height="34" rx="4"/></g>
+      </svg>
+      <svg class="tmap-route" aria-hidden="true"><path id="tm-route"/></svg>
+      <div id="tm-pins"></div>
+      <div class="tm-hud">
+        <span class="chip"><span class="dot"></span>An imaginary town · real people</span>
+        <button class="btn ghost" id="tm-tour" type="button" data-magnetic><span id="tm-tour-label">Take the tour</span></button>
+      </div>
+      <aside class="tm-card" id="tm-card" aria-live="polite" hidden>
+        <div class="tm-card-head">
+          <img id="tm-photo" alt="">
+          <div><span class="role" id="tm-role"></span><h3 id="tm-name"></h3><span class="tm-place" id="tm-place"></span></div>
+          <button class="vc-x" id="tm-close" aria-label="Close">×</button>
+        </div>
+        <div class="tm-player">
+          <button class="tm-play" id="tm-play" aria-label="Play"><svg class="i-play" viewBox="0 0 16 16" fill="currentColor"><path d="M4.5 2.7v10.6a.6.6 0 0 0 .9.5l8.600-5.300a.6.6 0 0 0 0-1L5.400 2.200a.6.6 0 0 0-.9.5Z"/></svg><svg class="i-pause" viewBox="0 0 16 16" fill="currentColor"><rect x="3.5" y="2.5" width="3.200" height="11" rx="1"/><rect x="9.300" y="2.500" width="3.200" height="11" rx="1"/></svg></button>
+          <div class="wave" id="tm-wave"></div>
+          <span class="mono" id="tm-time"></span>
+        </div>
+        <div class="tm-foot"><a class="link" id="tm-link" target="_blank" rel="noopener">LinkedIn ↗</a><span class="tm-nav"><button id="tm-prev" aria-label="Previous">←</button><button id="tm-next" aria-label="Next">→</button></span></div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="pad" style="border-top:1px solid var(--line)">
+    <div class="wrap">
+      <div class="origin">
+        <div>
+          <span class="eyebrow" data-reveal>Why we're building this</span>
+          <p class="big" data-reveal style="margin-top:26px">Feeds forget. <span class="serif">Places don't.</span></p>
+        </div>
+        <div class="lead" data-reveal style="--d:.15s; max-width:none">
+          <p>Everything we post slides down a timeline and disappears. But the moments that matter to us happened somewhere: a bench, a doorway, a platform, a kitchen.</p>
+          <p>We wanted to give those moments back their address. So ReChord has no timeline, no filters and no expiry date. You say it, you pin it, and it stays.</p>
+        </div>
+      </div>
+      <div class="beliefs">
+        <article class="card belief" data-reveal><span class="num">01</span><h3>Voice-first</h3><p>A voice carries what text flattens: the laugh, the pause, the rain behind you.</p></article>
+        <article class="card belief" data-reveal style="--d:.1s"><span class="num">02</span><h3>Location-anchored</h3><p>Every voice belongs to a real spot on Earth. The map is the only feed.</p></article>
+        <article class="card belief" data-reveal style="--d:.2s"><span class="num">03</span><h3>Permanent &amp; personal</h3><p>No expiry and no performance. Public for whoever walks by, or private, just for you.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact">
+    <div class="glow" aria-hidden="true"></div>
+    <span class="eyebrow" data-reveal>Come say something</span>
+    <h2 class="display split">Leave a little <span class="serif">of you.</span></h2>
+    <div class="contact-actions" data-reveal>
+      <a class="btn" data-store target="_blank" rel="noopener" data-magnetic>Get ReChord</a>
+      <a class="btn ghost" href="index.html" data-magnetic>Try the map</a>
+    </div>
+  </section>
+</main>
+<footer class="footer" id="footer"></footer>
+<script src="js/core.js"></script>
+<script src="js/pages.js"></script>
+</body>
+</html>
