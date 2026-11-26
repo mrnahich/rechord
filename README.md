@@ -18,7 +18,7 @@ then open http://127.0.0.1:4780. It must be served over http(s): the microphone 
 
 ## Mock / placeholder content to replace before publishing
 
-- Demo voices: `assets/audio/*.m4a` are macOS text-to-speech; names, likes and play counts in `js/hook.js` are invented.
+- Map demo voices (maya, noor, theo, aiko, sam, zara) are audio cut from AI-generated selfie videos made in Google Flow; leo and jonas are hidden until they get a recording. Stories audio (`story_*.m4a`) is still macOS text-to-speech. Names, likes and play counts in `js/hook.js` are invented.
 - Avatars, covers and place photos in `assets/img/` are the generated images from the motion teasers.
 - `updates.html`: features are real, version numbers and dates are samples (`js/pages.js`).
 - `investors.html`: no metrics are shown; the four tiles are intentionally blank.
