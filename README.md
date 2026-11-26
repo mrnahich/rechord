@@ -11,14 +11,15 @@ then open http://127.0.0.1:4780. It must be served over http(s): the microphone 
 
 ## The hook (index.html, js/hook.js)
 
-- Visitor's city comes from their IP (geojs.io, then ipwho.is, then the browser time zone, then London).
+- Visitor's city comes from their IP (geojs.io, then ipwho.is, then the browser time zone, then London). If the IP's country disagrees with the browser time zone (a VPN), the time-zone city wins.
+- Place names in non-Latin scripts are skipped, and a voice only names a place that suits its story; otherwise it shows its plain title.
 - The map is MapLibre GL (vendored in `vendor/`) with our own style over OpenFreeMap vector tiles (OpenStreetMap data).
 - Demo voices are placed on real nearby places read from the map tiles; their titles use the real place name.
 - The visitor records up to 15 s. The recording is stored only in their browser (IndexedDB) and is never uploaded.
 
 ## Mock / placeholder content to replace before publishing
 
-- Map demo voices (maya, noor, theo, aiko, sam, zara) are audio cut from AI-generated selfie videos made in Google Flow; leo and jonas are hidden until they get a recording. Stories audio (`story_*.m4a`) is still macOS text-to-speech. Names, likes and play counts in `js/hook.js` are invented.
+- Map demo voices (maya, noor, theo, aiko, sam, zara) are audio cut from AI-generated selfie videos made in Google Flow; leo and jonas are hidden until they get a recording. The Stories strip reuses the same voices; the old `story_*.m4a` TTS files are no longer used. Names, likes and play counts in `js/hook.js` are invented.
 - Avatars, covers and place photos in `assets/img/` are the generated images from the motion teasers.
 - `updates.html`: features are real, version numbers and dates are samples (`js/pages.js`).
 - `investors.html`: no metrics are shown; the four tiles are intentionally blank.

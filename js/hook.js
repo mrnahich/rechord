@@ -28,6 +28,8 @@
     { id: 'zara',  name: 'Zara',  ago: '2 weeks ago', likes: 203, plays: 1650, dur: 11.6, title: 'Note to self, {p}',    plain: 'Note to future me',          want: ['beach', 'park', 'attraction', 'garden'], peaks: [0.13,0.48,0.98,0.66,0.62,0.42,0.16,0.17,0.62,0.75,1.0,0.6,0.62,0.55,0.24,0.16,0.16,0.18,0.66,0.62,0.39,0.16,0.16,0.45,0.7,0.4,0.17,0.34,0.37,0.17,0.17,0.2,0.39,0.24,0.18,0.17,0.46,0.78,0.16,0.8,0.67,0.32,0.14,0.12], cover: 'cover_beach.jpg' }
   ].map((v, i) => ({ ...v, i, avatar: `assets/img/avatar_${v.id}.png`, audio: `assets/audio/${v.id}.m4a`, peaks: v.peaks || fakePeaks(i + 3, 44) }));
 
+  RC.voicePeaks = Object.fromEntries(DEMO.map(v => [v.id, v.peaks])); // the Stories strip reuses these voices
+
   // ------------------------------------------------------------------ where is the visitor?
   const TZ = { // last-resort guess from the browser's time zone when every IP lookup fails
     'Asia/Tehran': [35.7, 51.39, 'Tehran', 'Iran'], 'Europe/London': [51.507, -0.128, 'London', 'United Kingdom'], 'Europe/Istanbul': [41.01, 28.98, 'Istanbul', 'Türkiye'],
@@ -36,6 +38,10 @@
     'America/New_York': [40.73, -73.99, 'New York', 'United States'], 'America/Los_Angeles': [37.775, -122.42, 'San Francisco', 'United States'], 'America/Chicago': [41.88, -87.63, 'Chicago', 'United States'],
     'America/Toronto': [43.65, -79.38, 'Toronto', 'Canada'], 'Asia/Dubai': [25.2, 55.27, 'Dubai', 'UAE'], 'Asia/Tokyo': [35.68, 139.76, 'Tokyo', 'Japan'], 'Asia/Kolkata': [19.07, 72.88, 'Mumbai', 'India'],
     'Asia/Singapore': [1.29, 103.85, 'Singapore', 'Singapore'], 'Australia/Sydney': [-33.87, 151.21, 'Sydney', 'Australia']
+  };
+  const ALIAS = { // IP services and our TZ table spell some countries differently
+    unitedstatesofamerica: ['unitedstates'], usa: ['unitedstates'], us: ['unitedstates'], uk: ['unitedkingdom'], greatbritain: ['unitedkingdom'],
+    turkey: ['trkiye'], turkiye: ['trkiye'], unitedarabemirates: ['uae'], iranislamicrepublicof: ['iran'], islamicrepublicofiran: ['iran'], thenetherlands: ['netherlands']
   };
   async function getJSON(url, ms = 3500) {
     const ac = new AbortController(); const t = setTimeout(() => ac.abort(), ms);
@@ -46,8 +52,18 @@
       async () => { const r = await getJSON('https://get.geojs.io/v1/ip/geo.json'); if (!r.latitude) throw 0; return { lat: +r.latitude, lng: +r.longitude, city: r.city, country: r.country, by: 'ip' }; },
       async () => { const r = await getJSON('https://ipwho.is/?fields=success,city,country,latitude,longitude'); if (!r.success) throw 0; return { lat: r.latitude, lng: r.longitude, city: r.city, country: r.country, by: 'ip' }; }
     ];
-    for (const t of tries) { try { const p = await t(); if (isFinite(p.lat) && isFinite(p.lng) && p.city) return p; } catch { /* next */ } }
     const z = TZ[Intl.DateTimeFormat().resolvedOptions().timeZone];
+    const norm = s => String(s || '').toLowerCase().replace(/[^a-z]/g, '');
+    for (const t of tries) {
+      try {
+        const p = await t();
+        if (!(isFinite(p.lat) && isFinite(p.lng) && p.city)) continue;
+        // A VPN puts the IP in a data-centre town (e.g. Falkenstein, Germany). When the browser's own time zone
+        // points at a different country, trust the time zone: it is where the visitor's clock actually is.
+        if (z && p.country && norm(p.country) !== norm(z[3]) && !ALIAS[norm(p.country)]?.includes(norm(z[3]))) return { lat: z[0], lng: z[1], city: z[2], country: z[3], by: 'tz' };
+        return p;
+      } catch { /* next */ }
+    }
     if (z) return { lat: z[0], lng: z[1], city: z[2], country: z[3], by: 'tz' };
     return { lat: 51.507, lng: -0.128, city: 'London', country: 'United Kingdom', by: 'default' };
   }
@@ -138,7 +154,7 @@
     } catch { return fallback(); }
     map.touchZoomRotate.disable();
     let started = false;
-    const start = () => { if (started) return; started = true; hero.dataset.state = 'flying'; setTimeout(() => flyHome(false), 500); };
+    const start = () => { if (started) return; started = true; hero.dataset.state = 'flying'; setTimeout(() => flyHome(false), 200); };
     map.once('load', start);
     setTimeout(start, 6000);            // never leave the visitor on the loader
     map.on('error', () => {});
@@ -156,15 +172,18 @@
       if (flown && !changedCity) return; flown = true;
       hero.dataset.state = 'ready';
       const go = () => { seed(); wireRecorder(); };
-      if (map.loaded() && map.areTilesLoaded()) go(); else { let ran = false; const once = () => { if (!ran) { ran = true; go(); } }; map.once('idle', once); setTimeout(once, 3500); }
+      if (map.loaded() && map.areTilesLoaded()) go(); else { let ran = false; const once = () => { if (!ran) { ran = true; go(); } }; map.once('idle', once); setTimeout(once, 1200); }
     };
     if (reduced) { map.jumpTo(target); done(); }
-    else { map.flyTo({ ...target, duration: changedCity ? 4200 : 5600, curve: 1.42, essential: true }); map.once('moveend', done); }
+    else { map.flyTo({ ...target, duration: changedCity ? 3000 : 3200, curve: 1.42, essential: true }); map.once('moveend', done); }
     setSub(`This is a sketch of <b>${esc(here.city)}</b>. A few demo voices already live here. Hold the red button and leave yours.`);
   }
 
   // ------------------------------------------------------------------ demo pins on real places
-  const cleanName = p => { let n = p['name:en'] || p['name:latin'] || p.name || ''; n = n.split(/[;(/]/)[0].trim(); return n.length > 26 ? n.slice(0, 24).trim() + '…' : n; };
+  // The site is English: a name in another script (e.g. Persian in Tehran) would scramble the English line around it,
+  // so such a place counts as unnamed and the voice falls back to its plain title.
+  const latinOnly = n => !/[^\u0000-\u024F\u1E00-\u1EFF\u2000-\u206F]/.test(n);
+  const cleanName = p => { let n = [p['name:en'], p['name:latin'], p.name].find(x => x && latinOnly(x)) || ''; n = n.split(/[;(/]/)[0].trim(); if (n && n === n.toLowerCase()) n = n.replace(/\b\p{L}/gu, ch => ch.toUpperCase()); return n.length > 26 ? n.slice(0, 24).trim() + '…' : n; };
   function seed() {
     voices.forEach(v => v.marker?.remove()); voices = [];
     const W = map.getContainer().clientWidth, H = map.getContainer().clientHeight, pad = padding();
@@ -190,9 +209,12 @@
     const count = isSmall() ? 6 : DEMO.length;
     const r = rng(Math.round(here.lat * 1000) ^ Math.round(here.lng * 1000));
     DEMO.slice(0, count).forEach(v => {
-      let c = cands.find(c => !c.used && free(c.pt) && (v.want.includes(c.cls) || v.want.includes(c.sub))) || cands.find(c => !c.used && free(c.pt));
+      const fits = c => v.want.includes(c.cls) || v.want.includes(c.sub);
+      let c = cands.find(c => !c.used && free(c.pt) && fits(c)) || cands.find(c => !c.used && free(c.pt));
       let ll, title, place;
-      if (c) { c.used = true; taken.push(c.pt); ll = c.ll; title = v.title.replace('{p}', c.name); place = c.name; }
+      // Only name the place when it suits the story; otherwise "Sundays at <some hospital>" happens. Sit there with the plain title.
+      if (c && fits(c)) { c.used = true; taken.push(c.pt); ll = c.ll; title = v.title.replace('{p}', c.name); place = c.name; }
+      else if (c) { c.used = true; taken.push(c.pt); ll = c.ll; title = v.plain; place = here.city; }
       else { // nothing named nearby: sit on the map anyway with a place-less title
         let pt, n = 0; do { pt = { x: safe.x0 + r() * (safe.x1 - safe.x0), y: safe.y0 + r() * (safe.y1 - safe.y0) }; } while ((!inSafe(pt) || !free(pt) || Math.hypot(pt.x - centre.x, pt.y - centre.y) < 80) && ++n < 60);
         taken.push(pt); const l = map.unproject([pt.x, pt.y]); ll = [l.lng, l.lat]; title = v.plain; place = here.city;
@@ -204,7 +226,7 @@
       el.addEventListener('click', e => { e.stopPropagation(); select(voice, true); });
       voice.el = el; voice.marker = new maplibregl.Marker({ element: el, anchor: 'center' }).setLngLat(ll).addTo(map);
       voices.push(voice);
-      setTimeout(() => el.classList.add('in'), 250 + voices.length * 170);
+      setTimeout(() => el.classList.add('in'), 150 + voices.length * 110);
     });
     placeYou();
     nameNeighbourhood();

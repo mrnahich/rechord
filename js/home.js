@@ -48,14 +48,14 @@
   // ---------- stories: the app's own voice cards, with demo voices you can play ----------
   const strip = $('#strip');
   if (strip) {
-    // MOCK DATA: fictional people, places and counts; audio is text-to-speech.
+    // MOCK DATA: fictional people, places and counts. Audio is the same AI-generated selfie voice each person has on the map above,
+    // so every story card matches what you hear (see js/hook.js). Leo and Jonas return once they have a recording.
     const stories = [
-      { u: 'leo',  n: 'Leo',  img: '01_street.jpg',   title: 'My street, at night',     place: 'Rue Cler, Paris',      likes: 8143,  plays: 42100 },
-      { u: 'noor', n: 'Noor', img: '02_bench.jpg',    title: 'She said yes, right here', place: 'Cliff Walk, Howth',   likes: 31020, plays: 210400 },
-      { u: 'maya', n: 'Maya', img: '03_cafe.jpg',     title: 'Table by the window',     place: 'Le Marais, Paris',     likes: 12400, plays: 86300 },
-      { u: 'sam',  n: 'Sam',  img: '04_musician.jpg', title: 'Stay for one song',       place: 'Via Zamboni, Bologna', likes: 5210,  plays: 19800 },
-      { u: 'aiko', n: 'Aiko', img: '05_platform.jpg', title: 'Platform two',            place: 'Zürich HB',            likes: 2764,  plays: 11200 },
-      { u: 'zara', n: 'Zara', img: '06_window.jpg',   title: 'Rain sounds like home',   place: 'Notting Hill, London', likes: 9480,  plays: 37600 }
+      { u: 'maya', n: 'Maya', img: '02_bench.jpg',    title: 'Same bench, every morning',  place: 'Cliff Walk, Howth',    likes: 12400, plays: 86300 },
+      { u: 'noor', n: 'Noor', img: '03_cafe.jpg',     title: 'Our first date, right here', place: 'Le Marais, Paris',     likes: 31020, plays: 210400 },
+      { u: 'sam',  n: 'Sam',  img: '06_window.jpg',   title: 'Rain, and a piano upstairs', place: 'Via Zamboni, Bologna', likes: 5210,  plays: 19800 },
+      { u: 'aiko', n: 'Aiko', img: '05_platform.jpg', title: 'Day one in a new city',      place: 'Zürich HB',            likes: 2764,  plays: 11200 },
+      { u: 'zara', n: 'Zara', img: 'cover_beach.jpg', title: 'Note to future me',          place: 'Brighton seafront',    likes: 9480,  plays: 37600 }
     ];
     const fmtK = n => n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1).replace('.0', '') + 'K' : String(n);
     const ic = {
@@ -79,7 +79,7 @@
             <div class="a-share">${ic.share}</div>
           </div>
         </div>
-        <div class="acard-player"><button class="a-play" type="button" aria-label="Play ${s.n}'s voice">${ic.btn}</button><div class="a-wave">${fakePeaks(i + 70, 44).map(h => `<i style="height:${Math.max(12, h * 100).toFixed(0)}%"></i>`).join('')}</div></div>
+        <div class="acard-player"><button class="a-play" type="button" aria-label="Play ${s.n}'s voice">${ic.btn}</button><div class="a-wave">${(RC.voicePeaks?.[s.u] || fakePeaks(i + 70, 44)).map(h => `<i style="height:${Math.max(12, h * 100).toFixed(0)}%"></i>`).join('')}</div></div>
       </article>`).join('');
 
     const audio = new Audio(); let cur = -1, raf = 0;
@@ -92,7 +92,7 @@
     };
     const toggle = i => {
       if (i === cur && !audio.paused) return stop();
-      if (i !== cur) { stop(); if (cur >= 0) $$('.a-wave i', cardAt(cur)).forEach(b => b.classList.remove('on')); cur = i; audio.src = `assets/audio/story_${stories[i].u}.m4a`; const s = stories[i]; s.plays++; $('.a-plays span', cardAt(i)).textContent = fmtK(s.plays); }
+      if (i !== cur) { stop(); if (cur >= 0) $$('.a-wave i', cardAt(cur)).forEach(b => b.classList.remove('on')); cur = i; audio.src = `assets/audio/${stories[i].u}.m4a`; const s = stories[i]; s.plays++; $('.a-plays span', cardAt(i)).textContent = fmtK(s.plays); }
       audio.play().then(() => { cardAt(i).classList.add('playing'); tick(); }).catch(() => {});
     };
     audio.addEventListener('ended', () => { if (cur >= 0) { cardAt(cur).classList.remove('playing'); $$('.a-wave i', cardAt(cur)).forEach(b => b.classList.remove('on')); } });
