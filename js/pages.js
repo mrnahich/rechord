@@ -4,7 +4,7 @@
   const { $, $$, clamp, fakePeaks, waveHTML, logoSVG, APP_STORE, reduced, observe } = RC;
 
   // PLACEHOLDER: replace with the real contact address before publishing.
-  const CONTACT_EMAIL = 'hello@rechord.life';
+  const CONTACT_EMAIL = 'info@rechord.life';
 
   $$('[data-store]').forEach(a => a.href = APP_STORE);
   $$('[data-mail]').forEach(a => a.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(a.dataset.mail)}`);

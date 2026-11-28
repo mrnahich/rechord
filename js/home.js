@@ -121,6 +121,33 @@
     addEventListener('scroll', move, { passive: true }); move();
   } else if (earth) earth.style.setProperty('--p', 1);
 
+  // ---------- product film: our play button first, then the browser's own controls (full screen on phones) ----------
+  const film = $('#film-video'), filmBtn = $('#film-play');
+  if (film && filmBtn) {
+    filmBtn.addEventListener('click', () => { film.closest('.film-frame').classList.add('playing'); film.play().catch(() => {}); });
+    film.addEventListener('play', () => film.closest('.film-frame').classList.add('playing'));
+    new IntersectionObserver(es => { if (!es[0].isIntersecting && !film.paused) film.pause(); }, { threshold: .15 }).observe(film);
+  }
+
+  // ---------- Android closed testing: collect the Gmail address a tester uses on their phone ----------
+  // No backend yet. Set WAITLIST_ENDPOINT to a form endpoint (e.g. a Google Form's formResponse URL) to store sign-ups;
+  // until then a sign-up opens a ready-to-send email to us, so nothing is lost.
+  const WAITLIST_ENDPOINT = '', WAITLIST_FIELD = 'email', WAITLIST_EMAIL = 'info@rechord.life';
+  const wl = $('#waitlist');
+  if (wl) wl.addEventListener('submit', async e => {
+    e.preventDefault();
+    const input = $('#wl-email', wl), note = $('#wl-note', wl), v = input.value.trim();
+    const say = (msg, cls = '') => { note.textContent = msg; note.className = 'wl-note ' + cls; };
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) { say('That doesn\'t look like an email address.', 'err'); input.focus(); return; }
+    if (WAITLIST_ENDPOINT) {
+      try { const fd = new FormData(); fd.append(WAITLIST_FIELD, v); await fetch(WAITLIST_ENDPOINT, { method: 'POST', mode: 'no-cors', body: fd }); say('You\'re on the list. We\'ll email you the test link.', 'ok'); wl.reset(); }
+      catch { say('Couldn\'t send that. Please try again in a moment.', 'err'); }
+      return;
+    }
+    location.href = `mailto:${WAITLIST_EMAIL}?subject=${encodeURIComponent('ReChord Android closed testing')}&body=${encodeURIComponent(`Please add me to the Android closed test.\n\nGmail used on my phone: ${v}`)}`;
+    say('Your email app should open with the request ready. Just press send.', 'ok');
+  });
+
   const qrEl = $('#qr');
   if (qrEl && window.qrcode) { const q = qrcode(0, 'M'); q.addData(APP_STORE); q.make(); qrEl.innerHTML = q.createSvgTag({ cellSize: 4, margin: 0, scalable: true }); }
 })();

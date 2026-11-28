@@ -106,6 +106,43 @@
     ]
   };
 
+  // ------------------------------------------------------------------ day / night
+  // The map follows the real sun at the visitor's place: daylight palette while the sun is up, the night one after dark.
+  // The visitor can flip it with the chip next to the city. The copy keeps its dark scrim either way, so text stays readable.
+  const DAY = {
+    bg: ['background-color', '#dde6f1'], green: ['fill-color', '#cde2d2'], park: ['fill-color', '#c2ddc9'], water: ['fill-color', '#a6cbef'],
+    'water-glow': ['line-color', '#6fa6e0'], waterway: ['line-color', '#93bde8'], border: ['line-color', '#7f9cc6'],
+    path: ['line-color', 'rgba(80,110,150,.35)'], minor: ['line-color', 'rgba(255,255,255,.95)'], mid: ['line-color', '#ffffff'], major: ['line-color', '#ffcf8a'],
+    rail: ['line-color', 'rgba(229,57,53,.4)'],
+    bld: ['fill-extrusion-color', ['interpolate', ['linear'], ['coalesce', ['get', 'render_height'], 8], 0, '#cdd8e7', 40, '#bccbe0', 120, '#a9bddb']],
+    'road-name': ['text-color', 'rgba(52,72,104,.8)'], place: ['text-color', 'rgba(30,48,80,.75)']
+  };
+  const HALO = { 'road-name': '#eef3f9', place: '#eef3f9' };
+  function sunAltitude(lat, lng, date = new Date()) { // degrees above the horizon (NOAA approximation, good to about a degree)
+    const rad = Math.PI / 180, d = (date - Date.UTC(2000, 0, 1, 12)) / 864e5;
+    const g = (357.529 + .98560028 * d) * rad, q = 280.459 + .98564736 * d, L = (q + 1.915 * Math.sin(g) + .02 * Math.sin(2 * g)) * rad, e = (23.439 - 3.6e-7 * d) * rad;
+    const dec = Math.asin(Math.sin(e) * Math.sin(L)), ra = Math.atan2(Math.cos(e) * Math.sin(L), Math.cos(L));
+    const gmst = (18.697374558 + 24.06570982441908 * d) % 24, ha = ((gmst * 15 + lng) * rad) - ra;
+    return Math.asin(Math.sin(lat * rad) * Math.sin(dec) + Math.cos(lat * rad) * Math.cos(dec) * Math.cos(ha)) / rad;
+  }
+  let theme = null, themeManual = false; const NIGHT = {};
+  function applyTheme(day) {
+    if (!map || !map.getLayer('bg')) return; // style not ready yet (isStyleLoaded() flickers false right after a paint change)
+    for (const [id, [prop, val]] of Object.entries(DAY)) {
+      if (!map.getLayer(id)) continue;
+      if (!(id in NIGHT)) NIGHT[id] = [prop, map.getPaintProperty(id, prop)];
+      map.setPaintProperty(id, prop, day ? val : NIGHT[id][1]);
+      if (HALO[id]) { const k = id + ':halo'; if (!(k in NIGHT)) NIGHT[k] = map.getPaintProperty(id, 'text-halo-color'); map.setPaintProperty(id, 'text-halo-color', day ? HALO[id] : NIGHT[k]); }
+    }
+    if (map.getLayer('bld')) map.setPaintProperty('bld', 'fill-extrusion-opacity', day ? .85 : .62);
+    theme = day ? 'day' : 'night'; hero.dataset.theme = theme;
+    const b = $('#theme-btn'); b.hidden = false;
+    $('.ti', b).textContent = day ? '☀' : '☾';
+    $('.tl', b).textContent = `${day ? 'Day' : 'Night'} in ${here?.city || 'your city'}${themeManual ? '' : ' · live'}`;
+  }
+  const autoTheme = () => { if (!themeManual && here) applyTheme(sunAltitude(here.lat, here.lng) > -2); };
+  $('#theme-btn').addEventListener('click', () => { if (!theme) return; themeManual = true; applyTheme(theme !== 'day'); });
+
   // ------------------------------------------------------------------ state
   let map = null, here = null, me = null, youMarker = null, youEl = null;
   let voices = [], current = null, flown = false;
@@ -155,7 +192,7 @@
     map.touchZoomRotate.disable();
     let started = false;
     const start = () => { if (started) return; started = true; hero.dataset.state = 'flying'; setTimeout(() => flyHome(false), 200); };
-    map.once('load', start);
+    map.once('load', () => { autoTheme(); start(); });
     setTimeout(start, 6000);            // never leave the visitor on the loader
     map.on('error', () => {});
   }
@@ -167,6 +204,7 @@
   }
 
   function flyHome(changedCity) {
+    if (changedCity) autoTheme();
     const target = { center: [here.lng, here.lat], zoom: isSmall() ? 14.4 : 15, pitch: 52, bearing: -18, padding: padding() };
     const done = () => {
       if (flown && !changedCity) return; flown = true;

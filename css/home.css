@@ -388,3 +388,54 @@
 .a-wave i { flex: 1; border-radius: 2px; background: rgba(10, 65, 123, .2); transition: background .12s; } .a-wave i.on { background: #0a417b; }
 .acard.playing .a-wave i:not(.on) { animation: aw 1s ease-in-out infinite alternate; animation-delay: calc(var(--n, 0) * -90ms); }
 @keyframes aw { to { background: rgba(10, 65, 123, .38); } }
+
+/* Android closed-testing waitlist (inside the closing CTA) */
+.waitlist { margin-top: 26px; width: min(560px, 100%); padding: 20px 22px; border-radius: 24px; background: rgba(13, 22, 38, .72); backdrop-filter: blur(18px); box-shadow: inset 0 0 0 1px var(--line-2); display: grid; gap: 14px; }
+.wl-copy { color: var(--dim); font-size: 15px; line-height: 1.5; } .wl-copy b { color: var(--text); font-weight: 600; }
+.wl-row { display: flex; gap: 10px; }
+.wl-row input { flex: 1; min-width: 0; height: 48px; padding: 0 18px; border-radius: 999px; border: 0; background: rgba(5, 10, 20, .7); box-shadow: inset 0 0 0 1px var(--line-2); color: var(--text); font: 500 15px var(--sans); }
+.wl-row input::placeholder { color: var(--faint); }
+.wl-row input:focus { outline: none; box-shadow: inset 0 0 0 1.5px var(--blue); }
+.wl-row .btn { flex: none; height: 48px; }
+.wl-note { margin: 0; font-size: 13.5px; color: var(--faint); min-height: 1em; }
+.wl-note.err { color: #ff8a80; } .wl-note.ok { color: #8fe3b0; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (max-width: 480px) { .wl-row { flex-direction: column; } .wl-row .btn { justify-content: center; } }
+
+/* Real App Store reviews */
+.review-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.review { margin: 0; padding: 30px 30px 26px; display: grid; gap: 18px; align-content: start; }
+.r-stars { display: flex; gap: 4px; } .r-stars svg { width: 18px; height: 18px; fill: #ffc65c; }
+.review blockquote { margin: 0; font-size: clamp(17px, 1.5vw, 20px); line-height: 1.5; color: var(--text); letter-spacing: -.01em; }
+.review .r-title { font-weight: 600; margin: 0 0 8px; }
+.review blockquote p { margin: 0; }
+.review figcaption { display: grid; gap: 2px; font-size: 14px; } .review figcaption b { font-weight: 600; }
+.review figcaption span { color: var(--faint); font: 500 11.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+.review-more { display: inline-block; margin-top: 26px; color: var(--blue-2); font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase; }
+.review-more:hover { color: var(--text); }
+@media (max-width: 760px) { .review-grid { grid-template-columns: 1fr; } }
+
+/* Day / night chip; in daylight the map is light, so the scrims are tuned to keep the copy readable */
+.theme-btn { gap: 6px; } .theme-btn .ti { font-size: 13px; line-height: 1; }
+.hero[data-theme="day"] .hero-scrim { background:
+  linear-gradient(180deg, rgba(5, 10, 20, .88) 0%, rgba(5, 10, 20, .45) 12%, rgba(5, 10, 20, 0) 26%),
+  linear-gradient(0deg, rgba(5, 10, 20, 1) 0%, rgba(5, 10, 20, .62) 24%, rgba(5, 10, 20, 0) 50%),
+  linear-gradient(90deg, rgba(5, 10, 20, .92) 0%, rgba(5, 10, 20, .55) 36%, rgba(5, 10, 20, 0) 64%); }
+.hero[data-theme="day"] .maplibregl-ctrl-attrib { background: rgba(255, 255, 255, .7) !important; color: #4a5d7a; }
+.hero[data-theme="day"] .maplibregl-ctrl-attrib a { color: #2b3f5e !important; }
+@media (max-width: 720px) { /* phones: the copy sits at the top, so darken the top of a daylight map behind it */
+  .hero[data-theme="day"] .hero-scrim { background:
+    linear-gradient(180deg, rgba(5, 10, 20, .96) 0%, rgba(5, 10, 20, .9) 30%, rgba(5, 10, 20, .35) 44%, rgba(5, 10, 20, 0) 54%),
+    linear-gradient(0deg, rgba(5, 10, 20, .95) 0%, rgba(5, 10, 20, .4) 16%, rgba(5, 10, 20, 0) 30%); }
+}
+
+/* Product film (16:9). Poster with a big play button; the native controls take over once it plays, so phones can go full screen */
+.film-frame { position: relative; aspect-ratio: 16 / 9; border-radius: clamp(18px, 2.4vw, 32px); overflow: hidden; background: #050a14; box-shadow: 0 0 0 1px var(--line-2), 0 50px 120px -40px rgba(93, 168, 255, .35); }
+.film-frame video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #050a14; }
+.film-play { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 18px; background: radial-gradient(ellipse at center, rgba(5, 10, 20, .1), rgba(5, 10, 20, .55)); cursor: pointer; border: 0; color: var(--text); }
+.film-play .fp-btn { width: clamp(70px, 9vw, 112px); aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, .94); box-shadow: 0 0 0 12px rgba(255, 255, 255, .14), 0 20px 60px rgba(0, 0, 0, .5); transition: transform .5s var(--ease-out); }
+.film-play .fp-btn svg { width: 38%; fill: #0A417B; margin-left: 6%; }
+.film-play:hover .fp-btn { transform: scale(1.07); }
+.film-play .fp-label { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #dbe6f6; text-shadow: 0 2px 10px rgba(0, 0, 0, .6); }
+.film-frame.playing .film-play { display: none; }
+@media (max-width: 560px) { .film-play .fp-label { display: none; } }

@@ -5,6 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ReChord — Say it. Pin it. It stays.</title>
 <meta name="description" content="ReChord pins voice notes to real places. Record a moment where it happened, and let whoever walks by next hear it.">
+<!-- link preview -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ReChord">
+<meta property="og:title" content="ReChord — Say it. Pin it. It stays.">
+<meta property="og:description" content="ReChord pins voice notes to real places. Record a moment where it happened, and let whoever walks by next hear it.">
+<meta property="og:url" content="https://mrnahich.github.io/rechord/">
+<meta property="og:image" content="https://mrnahich.github.io/rechord/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ReChord — Say it. Pin it. It stays.">
+<meta name="twitter:description" content="ReChord pins voice notes to real places. Record a moment where it happened, and let whoever walks by next hear it.">
+<meta name="twitter:image" content="https://mrnahich.github.io/rechord/assets/og.png">
+<!-- /link preview -->
 <meta name="theme-color" content="#050a14">
 <link rel="icon" href="assets/ui/rechord-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,6 +46,7 @@
     <div class="hero-chips">
       <span class="chip" id="loc-chip"><span class="dot"></span><span id="loc-text">Locating…</span></span>
       <button class="chip chip-btn" id="city-btn" type="button">Wrong city?</button>
+      <button class="chip chip-btn theme-btn" id="theme-btn" type="button" hidden aria-label="Switch between day and night map"><span class="ti"></span><span class="tl"></span></button>
       <form class="city-form" id="city-form" hidden>
         <input id="city-input" type="text" placeholder="Type a city…" autocomplete="off" aria-label="City">
         <button type="submit" aria-label="Go">→</button>
@@ -79,6 +94,20 @@
   </div>
 
   <p class="hero-note">Voices on this map are demos, not real users. <a href="#how">See how the app works ↓</a></p>
+</section>
+
+<!-- ============================ FILM ============================ -->
+<section class="film pad" id="film">
+  <div class="wrap sec-head">
+    <span class="eyebrow" data-reveal>The film</span>
+    <h2 class="h2 split">ReChord <span class="serif">in a minute and a half.</span></h2>
+  </div>
+  <div class="wrap">
+    <div class="film-frame" data-reveal>
+      <video id="film-video" src="assets/video/rechord-film.mp4" poster="assets/video/rechord-film.jpg" preload="none" playsinline controls controlslist="nodownload" aria-label="ReChord product film"></video>
+      <button class="film-play" id="film-play" type="button" aria-label="Play the ReChord film"><span class="fp-btn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></span><span class="fp-label mono">Play · 1:38 · sound on</span></button>
+    </div>
+  </div>
 </section>
 
 <!-- ============================ HOW ============================ -->
@@ -172,6 +201,27 @@
   <div class="strip" id="strip"></div>
 </section>
 
+<!-- ============================ REVIEWS (real App Store reviews, quoted as written) ============================ -->
+<section class="reviews pad" id="reviews">
+  <div class="wrap sec-head">
+    <span class="eyebrow" data-reveal>From the App Store</span>
+    <h2 class="h2 split">People are <span class="serif">already listening.</span></h2>
+  </div>
+  <div class="wrap review-grid">
+    <figure class="review card" data-reveal>
+      <div class="r-stars" aria-label="5 out of 5 stars"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.2 5.7.8-4.1 4 1 5.7L10 14.8l-5.1 2.7 1-5.7-4.1-4 5.7-.8z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.2 5.7.8-4.1 4 1 5.7L10 14.8l-5.1 2.7 1-5.7-4.1-4 5.7-.8z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.2 5.7.8-4.1 4 1 5.7L10 14.8l-5.1 2.7 1-5.7-4.1-4 5.7-.8z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.2 5.7.8-4.1 4 1 5.7L10 14.8l-5.1 2.7 1-5.7-4.1-4 5.7-.8z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.2 5.7.8-4.1 4 1 5.7L10 14.8l-5.1 2.7 1-5.7-4.1-4 5.7-.8z"/></svg></div>
+      <blockquote><p class="r-title">Love it.</p><p>Absolutely amazing app. Better than anything I've seen before. How is they're not 1 million users right now it deserves it. Not addictive and not racing for your attention wonderful.</p></blockquote>
+      <figcaption><b>Bot 573</b><span>App Store · United Kingdom · July 2026</span></figcaption>
+    </figure>
+    <figure class="review card" data-reveal style="--d:.12s">
+      <div class="r-stars" aria-label="5 out of 5 stars"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.2 5.7.8-4.1 4 1 5.7L10 14.8l-5.1 2.7 1-5.7-4.1-4 5.7-.8z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.2 5.7.8-4.1 4 1 5.7L10 14.8l-5.1 2.7 1-5.7-4.1-4 5.7-.8z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.2 5.7.8-4.1 4 1 5.7L10 14.8l-5.1 2.7 1-5.7-4.1-4 5.7-.8z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.2 5.7.8-4.1 4 1 5.7L10 14.8l-5.1 2.7 1-5.7-4.1-4 5.7-.8z"/></svg><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.8l2.5 5.2 5.7.8-4.1 4 1 5.7L10 14.8l-5.1 2.7 1-5.7-4.1-4 5.7-.8z"/></svg></div>
+      <blockquote><p class="r-title">Amazing</p><p>It’s voices that last forever,<br>What a brilliant idea<br>Hope to hear more about people all around the world ✨</p></blockquote>
+      <figcaption><b>mornsis</b><span>App Store · Canada · July 2026</span></figcaption>
+    </figure>
+  </div>
+  <div class="wrap"><a class="review-more mono" data-store target="_blank" rel="noopener">Read reviews and rate ReChord on the App Store ↗</a></div>
+</section>
+
 <!-- ============================ CTA ============================ -->
 <section class="cta" id="get">
   <div class="cta-earth" id="cta-earth" aria-hidden="true"></div>
@@ -183,6 +233,15 @@
       <a class="store-badge" data-store target="_blank" rel="noopener" aria-label="Download on the App Store"><img src="assets/ui/app-store-badge.svg" alt="Download on the App Store" height="56"></a>
       <div class="qr"><div id="qr"></div><span class="mono">Scan with<br>your iPhone</span></div>
     </div>
+    <form class="waitlist" id="waitlist" data-reveal novalidate>
+      <div class="wl-copy"><b>On Android?</b> We're in closed testing on Google Play. Leave the Gmail address you use on your phone and we'll add you.</div>
+      <div class="wl-row">
+        <label class="sr-only" for="wl-email">Gmail address</label>
+        <input id="wl-email" type="email" inputmode="email" autocomplete="email" placeholder="you@gmail.com" required>
+        <button class="btn" type="submit">Join the test</button>
+      </div>
+      <p class="wl-note" id="wl-note" aria-live="polite"></p>
+    </form>
   </div>
 </section>
 </main>
