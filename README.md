@@ -24,7 +24,7 @@ then open http://127.0.0.1:4780. It must be served over http(s): the microphone 
 - `updates.html`: features are real, version numbers and dates are samples (`js/pages.js`).
 - `investors.html`: no metrics are shown; the four tiles are intentionally blank.
 - Contact address `hello@rechord.life` in `js/pages.js` is a placeholder.
-- Team voice intros are marked "soon"; no voices were fabricated for real people.
+- Team voices: Aslan, Oguzhan and Mahdi recorded their own (`assets/team/voice/`); Shayan and Jim still show "soon". No voices were fabricated for real people.
 
 ## Third-party services called from the visitor's browser
 
